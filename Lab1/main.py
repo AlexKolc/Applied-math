@@ -1,10 +1,8 @@
-import random
 import time
-import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import pandas as pd
-#import statistics as st
+import matplotlib.pyplot as plt
+import numpy as np
+
 from statistics import Statistics
 
 
@@ -41,20 +39,34 @@ def build_graphics(data, n_bins=10):
         value.append(x)
         count.append(np.count_nonzero(np.less_equal(data, x) == True))
 
-    first_last = 0.5  # для первой и последней линии
-    for i in range(len(value)):
+    x_points = []
+    y_points = []
+    first_last = 5  # для первой и последней линии
+    for i in range(len(value) + 1):
         if i == 0:
             x = np.linspace(value[i] - first_last, value[i], 2)
-        elif i == len(value) - 1:
-            x = np.linspace(value[i], value[i] + first_last, 2)
+            y = [count[i] / len(data), count[i] / len(data)]
+            x_points.append(value[i])
+            y_points.append(count[i] / len(data))
+        elif i == len(value):
+            x = np.linspace(value[-1], value[-1] + first_last, 2)
+            y = [count[-1] / len(data), count[-1] / len(data)]
+            plt.plot([value[-1]], [count[-1] / len(data)], 'ro', color='blue')
         else:
             x = np.linspace(value[i - 1], value[i], 2)
-        y = [count[i] / len(data), count[i] / len(data)]
+            y = [count[i] / len(data), count[i] / len(data)]
+            x_points.append(value[i])
+            y_points.append(count[i] / len(data))
+            plt.plot([value[i - 1]], [count[i] / len(data)], 'ro', color='blue')
         ax2.plot(
             x, y,
             linewidth=1,
             color='blue'
         )
+
+    df = pd.DataFrame({'x': np.array(x_points),
+                       'y': np.array(y_points)})
+    ax2.scatter(df.x.values, df.y.values, facecolors='none', edgecolors='blue')
     # levels = np.linspace(0, 1, len(data) + 1)  # endpoint 1 is included by default
     # ax2.step(sorted(list(data) + [max(data)]), levels)
     # plt.show()
@@ -64,6 +76,7 @@ def build_graphics(data, n_bins=10):
 def main():
     stat = Statistics()
     stat.load_data("data.txt")
+    print(stat.get_data())
 
     build_graphics(stat.get_data())
     print("Среднее значение выборки: ", stat.find_average_sample_value())
@@ -72,17 +85,12 @@ def main():
     print("Мода: ", stat.find_mode())
     print("Медиана: ", stat.find_median())
     print("Квартили: ", (stat.find_quartiles()))
-    #print("Квартили: ", (stat.find_quartiles()))
+    # print("Квартили: ", (stat.find_quartiles()))
     print("Стандартное отклонени: ", (stat.find_standard_deviation()))
     print("Эксцесс: ", (stat.find_kurtosis()))
     print("Асимметричность: ", (stat.find_skewness()))
     print("Минимум: ", (stat.find_min()))
     print("Максимум: ", (stat.find_max()))
-
-
-
-
-
 
 
 if __name__ == '__main__':
