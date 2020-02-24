@@ -22,9 +22,10 @@ class Graphic:
         ax.minorticks_on()
         ax.grid(which='major', linestyle=':', linewidth=0.25)
         ax.grid(which='minor', linestyle=':', linewidth=0.125)
+        # ax.set_xticks(np.unique(data))
         return ax
 
-    def empirical(self, ax, data):
+    def empirical_with_points(self, ax, data):
         """Метод для построения графика эмпирической функции распределения"""
         ax.set_title("Empirical distribution function graph")
         ax.set_ylabel("F(x)")
@@ -75,6 +76,63 @@ class Graphic:
         ax.scatter(df.x.values, df.y.values, facecolors='none', edgecolors='blue', alpha=1)
         return ax
 
+    def empirical_arrows(self, ax, data):
+        """Метод для построения графика эмпирической функции распределения (в виде стрелок)"""
+        ax.set_title("Empirical distribution function graph")
+        ax.set_ylabel("F(x)")
+        ax.set_xlabel("x")
+        # ax2.grid(True, linestyle=':', linewidth='0.5')
+        ax.minorticks_on()
+        ax.grid(which='major', linestyle=':', linewidth=0.25)
+        ax.grid(which='minor', linestyle=':', linewidth=0.125)
+        # ax.set_xticks(np.unique(data))
+
+        value, count = [], []
+        for x in np.unique(data):
+            value.append(x)
+            count.append(np.count_nonzero(np.less_equal(data, x) == True))
+
+        first_last = 5  # для первой и последней линии
+        for i in range(len(value) + 1):
+            if i == 0:
+                x = value[i]
+                y = count[i] / len(data)
+                dx = -first_last
+                dy = 0
+            elif i == len(value):
+                x = value[-1] + first_last
+                y = count[-1] / len(data)
+                dx = -first_last
+                dy = 0
+
+                ax.plot(
+                    [value[-1], value[-1]], [count[-1] / len(data), 0],
+                    linewidth=0.6,
+                    color='black',
+                    linestyle='--'
+                )
+            else:
+                x = value[i]
+                y = count[i] / len(data)
+                dx = value[i - 1] - value[i]
+                dy = 0
+
+                ax.plot(
+                    [value[i - 1], value[i - 1]], [count[i] / len(data), 0],
+                    linewidth=0.6,
+                    color='black',
+                    linestyle='--'
+                )
+            ax.arrow(x, y, dx, dy,
+                     width=0.001,
+                     length_includes_head=True,
+                     head_width=0.015,
+                     head_length=0.3,
+                     color='black',
+                     overhang=0
+                     )
+        return ax
+
     def build_hist_and_emp(self, data, n_bins=10, file="graphics.png"):
         """Метод для построения 2х графиков в одном файле"""
         fig, (ax1, ax2) = plt.subplots(
@@ -82,6 +140,6 @@ class Graphic:
             figsize=(8, 10)
         )
         ax1 = self.histogram(ax1, data)
-        ax2 = self.empirical(ax2, data)
+        ax2 = self.empirical_arrows(ax2, data)
 
         fig.savefig(file)
