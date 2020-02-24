@@ -5,9 +5,9 @@ import numpy as np
 
 
 class Graphic:
-    '''
+    """
         Класс для построения графиков
-    '''
+    """
 
     def __init__(self):
         pass
