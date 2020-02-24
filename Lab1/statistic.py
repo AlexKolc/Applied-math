@@ -2,7 +2,7 @@
 import numpy as np
 
 
-class Statistics:
+class Statistic:
     """
         Класс для нахождения всяких статистических величин.
     """

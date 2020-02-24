@@ -1,12 +1,12 @@
 # coding=utf-8
 import time
 
-from statistics import Statistics
+from statistic import Statistic
 from graphic import Graphic
 
 
 def main():
-    stat = Statistics()
+    stat = Statistic()
     stat.load_data("data.txt")
     # print(stat.get_data())
 
