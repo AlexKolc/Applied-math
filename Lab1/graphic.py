@@ -1,13 +1,19 @@
+# coding=utf-8
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 class Graphic:
+    '''
+        Класс для построения графиков
+    '''
+
     def __init__(self):
         pass
 
     def histogram(self, ax, data, n_bins=10):
+        """Метод для построения гистограммы"""
         ax.set_title("Histogram")
         ax.set_ylabel("Frequency * " + str(len(data)))
         ax.set_xlabel("Value")
@@ -19,6 +25,7 @@ class Graphic:
         return ax
 
     def empirical(self, ax, data):
+        """Метод для построения графика эмпирической функции распределения"""
         ax.set_title("Empirical distribution function graph")
         ax.set_ylabel("F(x)")
         ax.set_xlabel("x")
@@ -69,6 +76,7 @@ class Graphic:
         return ax
 
     def build_hist_and_emp(self, data, n_bins=10, file="graphics.png"):
+        """Метод для построения 2х графиков в одном файле"""
         fig, (ax1, ax2) = plt.subplots(
             nrows=2, ncols=1,
             figsize=(8, 10)

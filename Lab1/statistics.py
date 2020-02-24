@@ -1,10 +1,10 @@
+# coding=utf-8
 import numpy as np
 
 
 class Statistics:
     """
         Класс для нахождения всяких статистических величин.
-
     """
 
     def __init__(self, ):
