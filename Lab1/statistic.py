@@ -1,5 +1,11 @@
 # coding=utf-8
 import numpy as np
+from scipy import stats
+from scipy import special
+
+import math
+
+from scipy.stats import chi2
 
 
 class Statistic:
@@ -125,3 +131,67 @@ class Statistic:
     def find_max(self):
         """Метод для нахождения максимума."""
         return np.max(self.data)
+
+    def split_data(self, n_bins=10):
+        """Метод разбивающий датасет на интервалы одинаковой длины
+        с подсчетом элементов входящих в каждый интервал"""
+        eps = 1e-10
+        min_d = self.find_min()
+        max_d = self.find_max()
+        h = (max_d - min_d + eps) / n_bins
+
+        inter, count = [], []
+        for i in range(n_bins):
+            if i == 0:
+                inter.append(min_d)
+                inter.append(min_d + h)
+            else:
+                inter.append(inter[-1] + h)
+            greater = np.greater_equal(self.data, inter[-2])
+            less = np.less(self.data, inter[-1])
+            count.append(np.count_nonzero(greater == less))
+            # print(inter[-2], inter[-1], count[-1])
+        # print(len(self.data), np.sum(count))
+        return inter, count
+
+    def laplace_function(self, x):
+        """Метод расчитывающий значение функции Лапласа в x"""
+        # helped https://stackoverflow.com/questions/56016484/how-to-calculate-laplace-function-in-python-3
+        return special.erf(x / 2 ** 0.5) / 2
+
+    def pearson_criterion(self, alpha=0.025):
+        """Метод приверки гипотезы H0 с помощью критерия Пирсона."""
+        inter, count = self.split_data(9)
+
+        asv = self.find_average_sample_value()
+        disp = np.sqrt(self.find_selective_dispersion())
+
+        theor_freq = []
+        n = len(count)
+        inter[0] = -np.inf
+        inter[-1] = np.inf
+        # print("   xi      xi1    Fi      Fi1      n'       n")
+        for i in range(len(inter) - 1):
+            inter[i + 1] -= asv
+            inter[i + 1] /= disp
+            pi = self.laplace_function(inter[i + 1]) - self.laplace_function(inter[i])
+            theor_freq.append(len(self.data) * pi)
+            # print("%6.3f  %6.3f  %6.3f  %6.3f  %6.3f %6d" % (inter[i], inter[i + 1]
+            #                                                  , self.laplace_function(inter[i])
+            #                                                  , self.laplace_function(inter[i + 1])
+            #                                                  , theor_freq[-1], count[i]))
+        count = np.array(count)
+        theor_freq = np.array(theor_freq)
+        chi2_observed = np.sum((count - theor_freq) ** 2 / theor_freq)
+        k = n - 3
+        chi2_critical = chi2.ppf(1 - alpha, k)
+        print("Наблюдаемое значение: %.3f" % (chi2_observed))
+        print("Критическое значение %.3f" % (chi2_critical))
+
+        if chi2_observed < chi2_critical:
+            print("Наблюдаемое < критического => ")
+            print("Нет оснований отвергнуть гипотезу H_0 о нормальном "
+                  "распределении генеральной совокупности.")
+        else:
+            print("Наблюдаемое > критического =>")
+            print("Гипотезу H_0 отвергаем.")

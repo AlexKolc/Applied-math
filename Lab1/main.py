@@ -32,6 +32,9 @@ def main():
     print("Минимум: ", (stat.find_min()))
     print("Максимум: ", (stat.find_max()))
 
+    print("\nПроверка гипотезы H_0:")
+    stat.pearson_criterion()
+
 
 if __name__ == '__main__':
     start_time = time.time()
