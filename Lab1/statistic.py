@@ -31,19 +31,20 @@ class Statistic:
     # Выборочная дисперсия
     def find_selective_dispersion(self):
         """Метод для вычисления выборочной дисперсии."""
-        return np.sum(np.array(self.data) ** 2) / self.n - self.find_average_sample_value() ** 2
+        asv = self.find_average_sample_value()
+        return np.sum((np.array(self.data) - asv) ** 2) / (self.n - 1)
 
     # стандартная ошибка
     def find_standard_error(self):
         """Метод для вычисления стандартной ошибки."""
-        return (self.find_selective_dispersion() * self.n
-                / (self.n - 1)) / np.sqrt(self.n)
+        sd = self.find_selective_dispersion()
+        return np.sqrt(sd / self.n)
 
     # мода
     def find_mode(self):
         """Метод для вычисления моды."""
         value, count = np.unique(self.data, return_counts=True)
-        return value[np.argmax(count)]
+        return [value[i] for i in np.where(count == count[count.argmax()])]
 
     # медиана
     def find_median(self, data=[]):
@@ -82,26 +83,26 @@ class Statistic:
     # стандартное отклонение
     def find_standard_deviation(self):
         """Метод для вычисления стандартного отклонения."""
-        asv = self.find_average_sample_value()
-        return np.sqrt(
-            np.sum(np.array(self.data - asv) ** 2) / (self.n - 1)
-        )
+        dispersion = self.find_selective_dispersion()
+        return np.sqrt(dispersion)
 
     # эксцесс
     def find_kurtosis(self):
         """Метод для вычисления коэффициента эксцесса."""
         asv = self.find_average_sample_value()
-        return np.sqrt(
-            np.sum(np.array(self.data - asv) ** 4) / self.n
-        )
+        deviation = self.find_standard_deviation()
+        moment4 = np.sum((np.array(self.data) - asv) ** 4) / self.n
+        return moment4 / (deviation ** 4) - 3
 
     # Асимметричность
     def find_skewness(self):  # ????
         """Метод для вычисления коэффициента ассиметричности."""
         asv = self.find_average_sample_value()
-        skewness = (np.sum(np.array(self.data - asv) ** 3) / self.n) / (self.find_selective_dispersion() ** 3)
-        result = "распределение "
+        deviation = self.find_standard_deviation()
+        moment3 = np.sum((np.array(self.data) - asv) ** 3) / self.n
+        skewness = moment3 / (deviation ** 3)
 
+        result = "распределение "
         if np.abs(skewness) < 0.25:
             result += "незначительно"
         elif np.abs(skewness) > 0.5:
