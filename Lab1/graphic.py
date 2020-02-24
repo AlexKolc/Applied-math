@@ -2,6 +2,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from statistic import Statistic
 
 
 class Graphic:
@@ -131,7 +132,34 @@ class Graphic:
                      color='black',
                      overhang=0
                      )
+            ax.set_ylim(bottom=0, top=1.05)
         return ax
+
+    def build_box_plot(self, data, q1, q2, q3, min_x, max_x, file="box_plot.png"):
+        fig, ax = plt.subplots()
+        ax.set_title("Box plot")
+        # ax2.grid(True, linestyle=':', linewidth='0.5')
+        ax.minorticks_on()
+        ax.grid(which='major', linestyle=':', linewidth=0.25)
+        ax.grid(which='minor', linestyle=':', linewidth=0.125)
+
+        ax.boxplot(data)
+        ax.text(1.1, min_x, "min")
+        ax.text(1.1, max_x, "max")
+        ax.text(1.1, q1, "quartile 1")
+        ax.text(1.1, q2, "median")
+        ax.text(1.1, q3, "quartile 3")
+        ylim = ax.get_ylim()
+        xlim = ax.get_xlim()
+        ax.plot([0, 1], [max_x, max_x], linewidth=0.6, color='black', linestyle='--', alpha=0.3)
+        ax.plot([0, 1], [min_x, min_x], linewidth=0.6, color='black', linestyle='--', alpha=0.3)
+        ax.plot([0, 1], [q1, q1], linewidth=0.6, color='black', linestyle='--', alpha=0.3)
+        ax.plot([0, 1], [q2, q2], linewidth=0.6, color='orange', linestyle='--', alpha=0.3)
+        ax.plot([0, 1], [q3, q3], linewidth=0.6, color='black', linestyle='--', alpha=0.3)
+        ax.set_ylim(ylim)
+        ax.set_xlim(xlim)
+        # plt.show()
+        fig.savefig(file)
 
     def build_hist_and_emp(self, data, n_bins=10, file="graphics.png"):
         """Метод для построения 2х графиков в одном файле"""
