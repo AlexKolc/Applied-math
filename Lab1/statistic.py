@@ -195,3 +195,21 @@ class Statistic:
         else:
             print("Наблюдаемое > критического =>")
             print("Гипотезу H_0 отвергаем.")
+
+    def expected_value_interval(self, gamma=0.95):
+        asv = self.find_average_sample_value()
+        n = len(self.data)
+        s = np.sqrt(n / (n - 1) * self.find_selective_dispersion())
+        t = stats.t.ppf(gamma, n - 1)
+        left = asv - (t * s) / np.sqrt(n)
+        right = asv + (t * s) / np.sqrt(n)
+        return left, right
+
+    def standard_deviation_interval(self, gamma=0.95):
+        n = len(self.data)
+        s = np.sqrt(n / (n - 1) * self.find_selective_dispersion())
+        chi_1 = np.sqrt(chi2.ppf((1 - gamma) / 2, n - 1))
+        chi_2 = np.sqrt(chi2.ppf(1 - (1 - gamma) / 2, n - 1))
+        left = (np.sqrt(n - 1) * s) / chi_2
+        right = (np.sqrt(n - 1) * s) / chi_1
+        return left, right

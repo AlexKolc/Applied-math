@@ -35,6 +35,10 @@ def main():
     print("\nПроверка гипотезы H_0:")
     stat.pearson_criterion()
 
+    print("\nДоверительный интервал матожидания: (%.3f; %.3f)" % (stat.expected_value_interval()))
+    print("\nДоверительный интервал среднеквадратичного "
+          "отклонения: (%.3f; %.3f)" % (stat.standard_deviation_interval()))
+
 
 if __name__ == '__main__':
     start_time = time.time()
