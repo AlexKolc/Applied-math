@@ -3,8 +3,6 @@ import numpy as np
 from scipy import stats
 from scipy import special
 
-import math
-
 from scipy.stats import chi2
 
 
