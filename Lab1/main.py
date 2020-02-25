@@ -1,17 +1,24 @@
 # coding=utf-8
 import time
+import sys
 
 from statistic import Statistic
 from graphic import Graphic
 
 
-def main():
+def main(type='console', path='results/all_print.txt'):
+    if type != 'console':
+        orig_stdout = sys.stdout
+        f = open(path, 'w')
+        sys.stdout = f
+
     stat = Statistic()
     stat.load_data("data.txt")
     # print(stat.get_data())
 
     gr = Graphic()
     gr.build_hist_and_emp(stat.get_data())
+    print("Гистограмма и график эмпирической функции распределения построены.\n")
 
     print("Среднее значение выборки: %.3f" % (stat.find_average_sample_value()))
     print("Выборочная дисперсия: %.3f" % (stat.find_selective_dispersion()))
@@ -38,6 +45,10 @@ def main():
     print("\nДоверительный интервал матожидания: (%.3f; %.3f)" % (stat.expected_value_interval()))
     print("\nДоверительный интервал среднеквадратичного "
           "отклонения: (%.3f; %.3f)" % (stat.standard_deviation_interval()))
+
+    if type != 'console':
+        sys.stdout = orig_stdout
+        f.close()
 
 
 if __name__ == '__main__':
