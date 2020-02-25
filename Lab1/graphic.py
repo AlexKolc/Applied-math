@@ -134,7 +134,7 @@ class Graphic:
             ax.set_ylim(bottom=0, top=1.05)
         return ax
 
-    def build_box_plot(self, data, q1, q2, q3, min_x, max_x, file="box_plot.png"):
+    def build_box_plot(self, data, q1, q2, q3, min_x, max_x, file="results/box_plot.png"):
         fig, ax = plt.subplots()
         ax.set_title("Box plot")
         # ax2.grid(True, linestyle=':', linewidth='0.5')
@@ -160,7 +160,7 @@ class Graphic:
         # plt.show()
         fig.savefig(file)
 
-    def build_hist_and_emp(self, data, n_bins=10, file="graphics.png"):
+    def build_hist_and_emp(self, data, n_bins=10, file="results/graphics.png"):
         """Метод для построения 2х графиков в одном файле"""
         fig, (ax1, ax2) = plt.subplots(
             nrows=2, ncols=1,
